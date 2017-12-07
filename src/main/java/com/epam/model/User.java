@@ -13,11 +13,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
 @Entity
 @Table
 @NoArgsConstructor
+@ToString(exclude = {"notebookList"})
 public class User implements Serializable {
 
   @Id
