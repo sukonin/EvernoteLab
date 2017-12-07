@@ -17,6 +17,10 @@ public class TagService implements CrudService<Tag, Long> {
     this.tagRepository = tagRepository;
   }
 
+  public Tag getByTag(String tag){
+    return tagRepository.getByTag(tag);
+  }
+
   @Override
   public List<Tag> getAll() {
     return tagRepository.findAll();

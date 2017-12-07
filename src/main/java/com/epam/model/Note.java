@@ -18,6 +18,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.Data;
 import lombok.ToString;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 
 @Data
@@ -33,11 +35,13 @@ public class Note implements Serializable {
   private String content;
   private boolean isActive;
   private Date date;
+
   @ManyToOne(fetch = FetchType.EAGER, targetEntity = Notebook.class)
   @JoinColumn(name = "notebook_id")
+  @OnDelete(action = OnDeleteAction.CASCADE)
   private Notebook notebook;
 
-  @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+  @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   @JoinTable(name = "note_tag",
       joinColumns = @JoinColumn(name = "note_id"),
       inverseJoinColumns = @JoinColumn(name = "tag_id"))

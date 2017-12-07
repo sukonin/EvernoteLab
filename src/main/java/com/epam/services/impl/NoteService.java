@@ -21,6 +21,19 @@ public class NoteService implements CrudService<Note, Long> {
     this.noteRepository = noteRepository;
   }
 
+  public Note getByTitle(String title) {
+    return noteRepository.findNoteByTitle(title);
+  }
+
+  public void addTagToNote(Tag tag) {
+    //todo
+
+  }
+
+  public void removeTagFromNote(Tag tag) {
+    //todo
+
+  }
 
   public List<Note> getAllNotesByTag(Tag tag) {
     List<Note> notes = noteRepository.findAll();
@@ -36,6 +49,10 @@ public class NoteService implements CrudService<Note, Long> {
       }
     }
     return result;
+  }
+
+  public List<Note> getAllNotesByTag(List<Tag> tags) {
+    return noteRepository.getNoteByTags(tags);
   }
 
   @Override
