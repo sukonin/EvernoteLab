@@ -12,6 +12,7 @@ import com.epam.services.impl.TagService;
 import com.epam.services.impl.UserService;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.Collections;
 import lombok.extern.java.Log;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,47 +46,32 @@ public class test {
     user.setEmail("user1@mail.ru");
     user.setPassword("password");
     user.setUsername("username");
+    userService.saveOrUpdate(user);
 
     User user2 = new User();
     user2.setEmail("user2@mail.ru");
     user2.setPassword("password");
     user2.setUsername("username");
-
-    userService.saveOrUpdate(user);
     userService.saveOrUpdate(user2);
 
     /*Init Notebook Table*/
     Notebook notebook = new Notebook();
     notebook.setTittle("First Notebook for first User");
     notebook.setUser(user);
+    notebookService.saveOrUpdate(notebook);
 
     Notebook notebook1 = new Notebook();
     notebook1.setTittle("Second Notebook for first User");
     notebook1.setUser(user);
+    notebookService.saveOrUpdate(notebook1);
+
     Notebook notebook2 = new Notebook();
     notebook2.setTittle("Notebook for Second User");
     notebook2.setUser(user2);
-    notebookService.saveOrUpdate(notebook);
-    notebookService.saveOrUpdate(notebook1);
     notebookService.saveOrUpdate(notebook2);
 
 
-     /*Init Tag Table*/
-    Tag tag1 = new Tag();
-    tag1.setTag("work tag");
-    Tag tag4 = new Tag();
-    tag4.setTag("High Priority");
-    Tag tag2 = new Tag();
-    tag2.setTag("home tag");
-    Tag tag3 = new Tag();
-    tag3.setTag("Vacation tag");
-
-    tagService.saveOrUpdate(tag1);
-    tagService.saveOrUpdate(tag2);
-    tagService.saveOrUpdate(tag3);
-    tagService.saveOrUpdate(tag4);
-
-  /*Init Note Table*/
+    /*Init Note Table*/
     Note note = new Note();
     note.setTitle("First Note");
     note.setActive(true);
@@ -94,6 +80,7 @@ public class test {
     note.setContent("TODO Application! And go to PROD!");
     note.setNotebook(notebook);
 
+    noteService.saveOrUpdate(note);
 
     Note note2 = new Note();
     note2.setNotebook(notebook1);
@@ -102,19 +89,34 @@ public class test {
     note2.setTitle("BlaBla");
     note2.setDate(Date.valueOf(LocalDate.now()));
 
-
-    noteService.saveOrUpdate(note);
     noteService.saveOrUpdate(note2);
 
-/*
-    log.warning(noteService.getAllNotesByTag(tag1).toString());
-*/
+    /*Init Tag Table*/
+
+    Tag tag = new Tag();
+    tag.setTag("work");
+    tagService.saveOrUpdate(tag);
+
+    Tag tag2 = new Tag();
+    tag2.setTag("home");
+    tagService.saveOrUpdate(tag2);
+
+    Tag tag3 = new Tag();
+    tag3.setTag("vacation");
+    tagService.saveOrUpdate(tag3);
+
+    Tag tag4 = new Tag();
+    tag4.setTag("priority");
+    tagService.saveOrUpdate(tag4);
 
 
+    /*Add Tag To Node*/
+    Note note1 = noteService.getByTitle("First Note");
+    Tag toUpdate = tagService.getByTag("work");
+    note1.setTags(Collections.singletonList(toUpdate));
+    noteService.saveOrUpdate(note1);
 
-
-
-
+    log.warning(note1.getTags().toString());
 
 
   }
