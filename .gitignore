@@ -26,3 +26,5 @@ hs_err_pid*
 .gitignore
 .idea/
 evernote.iml
+src/test/
+target/
