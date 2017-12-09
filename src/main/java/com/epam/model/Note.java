@@ -25,7 +25,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Data
 @Entity
 @Table
-@ToString(exclude = {"notebook", "tags"})
+@ToString(exclude = {"notebook", "tags"}) //Иначе StackOverFlow
 public class Note implements Serializable {
 
   @Id
@@ -33,18 +33,19 @@ public class Note implements Serializable {
   private Long id;
   private String title;
   private String content;
-  private boolean isActive;
+  private Boolean isActive;
   private Date date;
 
   @ManyToOne(fetch = FetchType.EAGER, targetEntity = Notebook.class)
   @JoinColumn(name = "notebook_id")
-  @OnDelete(action = OnDeleteAction.CASCADE)
+//  @OnDelete(action = OnDeleteAction.CASCADE)
   private Notebook notebook;
 
   @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   @JoinTable(name = "note_tag",
       joinColumns = @JoinColumn(name = "note_id"),
       inverseJoinColumns = @JoinColumn(name = "tag_id"))
+  /*TODO заменить на Set*/
   private List<Tag> tags = new ArrayList<>();
 
 }

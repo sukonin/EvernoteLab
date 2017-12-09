@@ -3,9 +3,12 @@ package com.epam.services.impl;
 import com.epam.model.Note;
 import com.epam.model.Tag;
 import com.epam.repository.NoteRepository;
+import com.epam.repository.TagRepository;
 import com.epam.services.CrudService;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,24 +18,41 @@ import org.springframework.stereotype.Service;
 public class NoteService implements CrudService<Note, Long> {
 
   private final NoteRepository noteRepository;
+  private final TagRepository tagRepository;
 
   @Autowired
-  public NoteService(NoteRepository noteRepository) {
+  public NoteService(NoteRepository noteRepository, TagRepository tagRepository) {
     this.noteRepository = noteRepository;
+    this.tagRepository = tagRepository;
   }
 
   public Note getByTitle(String title) {
     return noteRepository.findNoteByTitle(title);
   }
 
-  public void addTagToNote(Tag tag) {
-    //todo
-
+  public List<Note> getByStatus(Boolean isActive) {
+    return noteRepository.findNotesByIsActive(isActive);
   }
 
-  public void removeTagFromNote(Tag tag) {
-    //todo
+  public Note getByContent(String content) {
+    return noteRepository.findNoteByContent(content);
+  }
 
+  public List<Note> getNotesByDate(Date date) {
+    return noteRepository.findNotesByDate(date);
+  }
+
+  public void addTagToNote(Tag tag, Note note) {
+    note.getTags().add(tag);
+    noteRepository.save(note);
+  }
+
+  /*TODO FIX THIS METHOD*/
+  public void removeTagFromNote(Tag tag, Note note) {
+    note.getTags().remove(tag);
+    tag.getNotes().remove(note);
+    noteRepository.save(note);
+    tagRepository.save(tag);
   }
 
   public List<Note> getAllNotesByTag(Tag tag) {
@@ -51,8 +71,8 @@ public class NoteService implements CrudService<Note, Long> {
     return result;
   }
 
-  public List<Note> getAllNotesByTag(List<Tag> tags) {
-    return noteRepository.getNoteByTags(tags);
+  public Set<Note> getAllNotesByTag(List<Tag> tags) {
+    return noteRepository.findNotesByTagsIn(tags);
   }
 
   @Override
@@ -75,7 +95,6 @@ public class NoteService implements CrudService<Note, Long> {
     noteRepository.delete(id);
   }
 
-  @Override
   public void deleteAll() {
     noteRepository.deleteAll();
   }

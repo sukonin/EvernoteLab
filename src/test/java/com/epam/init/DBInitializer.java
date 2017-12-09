@@ -1,7 +1,5 @@
-package com.epam.services;
+package com.epam.init;
 
-
-import com.epam.config.ApplicationConfiguration;
 import com.epam.model.Note;
 import com.epam.model.Notebook;
 import com.epam.model.Tag;
@@ -12,22 +10,15 @@ import com.epam.services.impl.TagService;
 import com.epam.services.impl.UserService;
 import java.sql.Date;
 import java.time.LocalDate;
-import java.util.Collections;
+import javax.annotation.PostConstruct;
 import lombok.extern.java.Log;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Service;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = ApplicationConfiguration.class)
-@DirtiesContext(classMode = ClassMode.AFTER_CLASS)
+@Service
 @Log
-public class test {
+public class DBInitializer {
+
 
   @Autowired
   NotebookService notebookService;
@@ -38,9 +29,17 @@ public class test {
   @Autowired
   TagService tagService;
 
-  @Transactional
-  public void initDB() {
 
+ /*
+      H2Console http://localhost:8082/
+      url = jdbc:h2:mem:test
+      user = sa
+      password =
+*/
+
+  @PostConstruct
+  public void initDB() {
+    log.info("Staring database initialization...");
     /*Init User Table*/
     User user = new User();
     user.setEmail("user1@mail.ru");
@@ -74,7 +73,7 @@ public class test {
     /*Init Note Table*/
     Note note = new Note();
     note.setTitle("First Note");
-    note.setActive(true);
+    note.setIsActive(true);
     LocalDate of = LocalDate.of(2017, 12, 29);
     note.setDate(Date.valueOf(of));
     note.setContent("TODO Application! And go to PROD!");
@@ -85,7 +84,7 @@ public class test {
     Note note2 = new Note();
     note2.setNotebook(notebook1);
     note2.setContent("blablaContent");
-    note2.setActive(false);
+    note2.setIsActive(false);
     note2.setTitle("BlaBla");
     note2.setDate(Date.valueOf(LocalDate.now()));
 
@@ -110,31 +109,15 @@ public class test {
     tagService.saveOrUpdate(tag4);
 
 
-    /*Add Tag To Node*/
-    Note note1 = noteService.getByTitle("First Note");
-    Tag toUpdate = tagService.getByTag("work");
-    note1.setTags(Collections.singletonList(toUpdate));
-    noteService.saveOrUpdate(note1);
+    noteService.addTagToNote(tag, note);
+    noteService.addTagToNote(tag4,note);
+    noteService.addTagToNote(tag, note2);
 
-    log.warning(note1.getTags().toString());
+    log.info("Database initialization finished!");
 
+    /*while (true) {
+    }*/
 
   }
-
-
-  @Test
-  public void main() {
-    initDB();
-
-    while (true) {
-      /*H2Console http://localhost:8082/
-      * url = jdbc:h2:mem:test
-      * user = sa
-      * password =
-      * */
-
-    }
-  }
-
 
 }

@@ -4,10 +4,12 @@ import com.epam.model.User;
 import com.epam.repository.UserRepository;
 import com.epam.services.CrudService;
 import java.util.List;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@Log
 public class UserService implements CrudService<User, Long> {
 
   private final UserRepository repository;
@@ -15,6 +17,10 @@ public class UserService implements CrudService<User, Long> {
   @Autowired
   public UserService(UserRepository repository) {
     this.repository = repository;
+  }
+
+  public User getByEmail(String email) {
+    return repository.findUserByEmail(email);
   }
 
   @Override
@@ -37,8 +43,4 @@ public class UserService implements CrudService<User, Long> {
     repository.delete(id);
   }
 
-  @Override
-  public void deleteAll() {
-    repository.deleteAll();
-  }
 }

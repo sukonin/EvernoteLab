@@ -5,10 +5,12 @@ import com.epam.model.User;
 import com.epam.repository.NotebookRepository;
 import com.epam.services.CrudService;
 import java.util.List;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@Log
 public class NotebookService implements CrudService<Notebook, Long> {
 
   private final NotebookRepository notebookRepository;
@@ -18,8 +20,12 @@ public class NotebookService implements CrudService<Notebook, Long> {
     this.notebookRepository = notebookRepository;
   }
 
-  public List<Notebook> getByUser(User user) {
+  public List<Notebook> getAllNotebookByUser(User user) {
     return notebookRepository.findByUser(user);
+  }
+
+  public Notebook getByTitle(String title) {
+    return notebookRepository.findByTittle(title);
   }
 
   @Override
@@ -42,7 +48,6 @@ public class NotebookService implements CrudService<Notebook, Long> {
     notebookRepository.delete(id);
   }
 
-  @Override
   public void deleteAll() {
     notebookRepository.deleteAll();
   }

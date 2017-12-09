@@ -4,9 +4,11 @@ import com.epam.model.Tag;
 import com.epam.repository.TagRepository;
 import com.epam.services.CrudService;
 import java.util.List;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+@Log
 @Service
 public class TagService implements CrudService<Tag, Long> {
 
@@ -17,7 +19,7 @@ public class TagService implements CrudService<Tag, Long> {
     this.tagRepository = tagRepository;
   }
 
-  public Tag getByTag(String tag){
+  public Tag getByTag(String tag) {
     return tagRepository.getByTag(tag);
   }
 
@@ -41,7 +43,6 @@ public class TagService implements CrudService<Tag, Long> {
     tagRepository.delete(id);
   }
 
-  @Override
   public void deleteAll() {
     tagRepository.deleteAll();
   }

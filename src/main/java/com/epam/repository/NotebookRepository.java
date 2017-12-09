@@ -12,5 +12,6 @@ import org.springframework.stereotype.Repository;
 public interface NotebookRepository extends JpaRepository<Notebook, Long> {
 
   List<Notebook> findByUser(User user);
+  Notebook findByTittle(String title);
 
 }
