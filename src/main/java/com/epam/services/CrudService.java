@@ -13,6 +13,4 @@ public interface CrudService<T, E> {
   void saveOrUpdate(T domainObject);
 
   void delete(E id);
-
-  void deleteAll();
 }

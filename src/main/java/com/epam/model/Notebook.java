@@ -15,6 +15,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.OnDelete;
@@ -24,7 +25,6 @@ import org.hibernate.annotations.OnDeleteAction;
 @Table
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 @ToString(exclude = {"user", "notes"})
 public class Notebook implements Serializable {
 
@@ -35,9 +35,10 @@ public class Notebook implements Serializable {
 
   @ManyToOne(fetch = FetchType.EAGER, targetEntity = User.class)
   @JoinColumn(name = "user_id", nullable = false)
+//  @OnDelete(action = OnDeleteAction.CASCADE)
   private User user;
 
-  @OnDelete(action = OnDeleteAction.CASCADE)
+//  @OnDelete(action = OnDeleteAction.CASCADE)
   @OneToMany(fetch = FetchType.EAGER, mappedBy = "notebook", cascade = CascadeType.ALL,
       orphanRemoval = true)
   private List<Note> notes = new ArrayList<>();

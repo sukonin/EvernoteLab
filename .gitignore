@@ -25,3 +25,4 @@ hs_err_pid*
 .idea/
 evernote.iml
 target/
+/db.mv.db

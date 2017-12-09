@@ -6,9 +6,41 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>evernote</groupId>
   <artifactId>evernote</artifactId>
-  <version>0.0.2-SNAPSHOT</version>
+  <version>0.0.1</version>
   <build>
     <plugins>
+      <!--Test coverage-->
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.7.9</version>
+        <configuration>
+          <destFile>${basedir}/target/coverage-reports/jacoco-unit.exec</destFile>
+          <dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>
+        </configuration>
+        <executions>
+          <execution>
+            <id>jacoco-initialize</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>jacoco-site</id>
+            <phase>test</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.12.1</version>
+        <configuration>
+          <argLine>-server -ea -XX:MaxPermSize=256m -Xmx4g -XX:-UseSplitVerifier ${argLine}</argLine>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -17,10 +49,11 @@
           <target>1.8</target>
         </configuration>
       </plugin>
+
     </plugins>
   </build>
-  <name>Evernote</name>
 
+  <name>Evernote</name>
 
 
   <dependencies>
@@ -61,7 +94,6 @@
       <scope>provided</scope>
     </dependency>
 
-
     <!-- Loggging -->
     <dependency>
       <groupId>ch.qos.logback</groupId>
@@ -84,5 +116,6 @@
     </dependency>
 
   </dependencies>
+
 
 </project>
