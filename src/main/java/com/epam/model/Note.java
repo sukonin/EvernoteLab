@@ -17,6 +17,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -25,7 +26,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Data
 @Entity
 @Table
-@ToString(exclude = {"notebook", "tags"}) //Иначе StackOverFlow
+@ToString(exclude = {"notebook", "tags"})//Иначе StackOverFlow
 public class Note implements Serializable {
 
   @Id
