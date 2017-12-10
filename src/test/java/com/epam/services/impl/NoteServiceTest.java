@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 
 import com.epam.config.ApplicationConfiguration;
 import com.epam.model.Note;
+import com.epam.model.Notebook;
 import com.epam.model.Tag;
 import java.sql.Date;
 import java.time.LocalDate;
@@ -19,26 +20,38 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = ApplicationConfiguration.class)
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 @Log
+@Transactional
 public class NoteServiceTest {
 
   @Autowired
   NoteService noteService;
   @Autowired
   TagService tagService;
+  @Autowired
+  NotebookService notebookService;
+  @Autowired
+  UserService userService;
 
   @Test
   public void getByTitle() throws Exception {
-    assertNotNull(noteService.getByTitle("First Note"));
+    assertNotNull(noteService.getByTitle("Third"));
   }
 
   @Test
   public void getByStatus() throws Exception {
     assertNotNull(noteService.getByStatus(true));
+  }
+
+  @Test
+  public void getByNotebook() throws Exception {
+    Notebook notebook = notebookService.getByTitle("Notebook for Second User");
+    assertNotEquals(noteService.getAllNotesByNotebook(notebook), Collections.EMPTY_LIST);
   }
 
   @Test
@@ -54,11 +67,14 @@ public class NoteServiceTest {
 
   @Test
   public void addTagToNote() throws Exception {
+
     Tag newTag = new Tag();
     newTag.setTag("test");
     tagService.saveOrUpdate(newTag);
-    Note note = noteService.getByTitle("First Note");
-    noteService.addTagToNote(newTag, note);
+
+    Note third = noteService.getByTitle("Third");
+
+    noteService.addTagToNote(newTag, third);
     assertNotEquals(noteService.getAllNotesByTag(newTag), Collections.EMPTY_LIST);
   }
 
@@ -85,7 +101,7 @@ public class NoteServiceTest {
     List<Tag> tagList = new ArrayList<>();
     tagList.add(tag);
     tagList.add(tag2);
-    assertNotEquals(noteService.getAllNotesByTag(tagList), Collections.EMPTY_SET);
+    assertNotEquals(noteService.getAllNotesByTag(tagList), Collections.EMPTY_LIST);
   }
 
   @Test
@@ -93,17 +109,13 @@ public class NoteServiceTest {
     assertNotEquals(noteService.getAll(), Collections.EMPTY_LIST);
   }
 
-  @Test
-  public void getById() throws Exception {
-    Note note = noteService.getByTitle("First Note");
-    Note byId = noteService.getById(note.getId());
-    assertNotNull(byId);
-  }
 
   @Test
   public void saveOrUpdate() throws Exception {
     Note note = new Note();
     note.setTitle("test");
+    Notebook notebook = notebookService.getByTitle("Notebook for Second User");
+    note.setNotebook(notebook);
     noteService.saveOrUpdate(note);
     Note test = noteService.getByTitle("test");
     assertNotNull(test);
@@ -111,15 +123,10 @@ public class NoteServiceTest {
   }
 
   @Test
-  public void delete() throws Exception {
-    Note test = noteService.getByTitle("First Note");
+  public void ydelete() throws Exception {
+    Note test = noteService.getByContent("blablaContent");
+    log.warning(test.toString());
     noteService.delete(test.getId());
-  }
-
-  @Test
-  public void deleteAll() throws Exception {
- /*   noteService.deleteAll();
-    assertEquals(noteService.getAll(), Collections.EMPTY_LIST);*/
   }
 
 }

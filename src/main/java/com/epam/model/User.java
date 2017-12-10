@@ -31,7 +31,6 @@ public class User implements Serializable {
 
   @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = CascadeType.ALL,
       orphanRemoval = true)
-//  @OnDelete(action = OnDeleteAction.CASCADE)
   private List<Notebook> notebookList = new ArrayList<>();
 
 

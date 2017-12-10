@@ -82,13 +82,21 @@ public class DBInitializer {
     noteService.saveOrUpdate(note);
 
     Note note2 = new Note();
-    note2.setNotebook(notebook1);
     note2.setContent("blablaContent");
     note2.setIsActive(false);
     note2.setTitle("BlaBla");
     note2.setDate(Date.valueOf(LocalDate.now()));
+    note2.setNotebook(notebook1);
 
     noteService.saveOrUpdate(note2);
+
+
+    Note note3 = new Note();
+    note3.setNotebook(notebook2);
+    note3.setContent("third");
+    note2.setIsActive(false);
+    note2.setTitle("Third");
+    noteService.saveOrUpdate(note3);
 
     /*Init Tag Table*/
 

@@ -36,9 +36,8 @@ public class Note implements Serializable {
   private Boolean isActive;
   private Date date;
 
-  @ManyToOne(fetch = FetchType.EAGER, targetEntity = Notebook.class)
-  @JoinColumn(name = "notebook_id")
-//  @OnDelete(action = OnDeleteAction.CASCADE)
+  @ManyToOne(fetch = FetchType.LAZY, targetEntity = Notebook.class)
+  @JoinColumn(name = "notebook_id",nullable = false)
   private Notebook notebook;
 
   @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
