@@ -1,12 +1,15 @@
 package com.epam.services.impl;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import com.epam.config.ApplicationConfiguration;
+import com.epam.model.Notebook;
 import com.epam.model.User;
 import java.util.Collections;
+import java.util.List;
 import lombok.extern.java.Log;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,6 +27,8 @@ public class UserServiceTest {
 
   @Autowired
   UserService userService;
+  @Autowired
+  NotebookService notebookService;
 
   @Test
   public void getAll() throws Exception {
@@ -46,11 +51,14 @@ public class UserServiceTest {
   }
 
   @Test
-  public void delete() throws Exception {
+  public void zdelete() throws Exception {
     User test = userService.getByEmail("user2@mail.ru");
     userService.delete(test.getId());
     User deleted = userService.getByEmail("user2@mail.ru");
     assertNull(deleted);
+    /*При удалении User удаляются связанные с ним Notebook и Note*/
+    List<Notebook> allNotebookByUser = notebookService.getAllNotebookByUser(test);
+    assertEquals(allNotebookByUser,Collections.EMPTY_LIST);
   }
 
 

@@ -33,12 +33,10 @@ public class Notebook implements Serializable {
   private Long id;
   private String tittle;
 
-  @ManyToOne(fetch = FetchType.EAGER, targetEntity = User.class)
+  @ManyToOne(fetch = FetchType.LAZY, targetEntity = User.class)
   @JoinColumn(name = "user_id", nullable = false)
-//  @OnDelete(action = OnDeleteAction.CASCADE)
   private User user;
 
-//  @OnDelete(action = OnDeleteAction.CASCADE)
   @OneToMany(fetch = FetchType.EAGER, mappedBy = "notebook", cascade = CascadeType.ALL,
       orphanRemoval = true)
   private List<Note> notes = new ArrayList<>();

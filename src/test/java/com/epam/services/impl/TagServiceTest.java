@@ -1,5 +1,6 @@
 package com.epam.services.impl;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -44,15 +45,15 @@ public class TagServiceTest {
   }
 
   @Test
-  public void delete() throws Exception {
+  public void zdelete() throws Exception {
     Tag test = tagService.getByTag("work");
     tagService.delete(test.getId());
   }
 
   @Test
-  public void deleteAll() throws Exception {
-/*    tagService.deleteAll();
-    assertEquals(tagService.getAll(), Collections.EMPTY_LIST);*/
+  public void zdeleteAll() throws Exception {
+    tagService.deleteAll();
+    assertEquals(tagService.getAll(), Collections.EMPTY_LIST);
   }
 
 }

@@ -1,7 +1,9 @@
 package com.epam.services.impl;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import com.epam.config.ApplicationConfiguration;
 import com.epam.model.Notebook;
@@ -27,6 +29,8 @@ public class NotebookServiceTest {
   NotebookService notebookService;
   @Autowired
   UserService userService;
+  @Autowired
+  NoteService noteService;
 
   @Test
   public void getByUser() throws Exception {
@@ -55,17 +59,17 @@ public class NotebookServiceTest {
   }
 
   @Test
-  public void delete() throws Exception {
-    Notebook notebook = notebookService.getByTitle("First Notebook for first User");
+  public void zdelete() throws Exception {
+    Notebook notebook = notebookService.getByTitle("Notebook for Second User");
     notebookService.delete(notebook.getId());
-    Notebook deleted = notebookService.getByTitle("First Notebook for first User");
-//    assertNull(deleted);
+    Notebook deleted = notebookService.getByTitle("Notebook for Second User");
+    assertNull(deleted);
   }
 
   @Test
-  public void deleteAll() throws Exception {
-/*    notebookService.deleteAll();
-    assertEquals(notebookService.getAll(), Collections.EMPTY_LIST);*/
+  public void zdeleteAll() throws Exception {
+    notebookService.deleteAll();
+    assertEquals(notebookService.getAll(), Collections.EMPTY_LIST);
   }
 
 }
