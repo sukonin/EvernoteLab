@@ -12,9 +12,11 @@ import java.util.List;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Log
 @Service
+@Transactional(readOnly = true)
 public class NoteService implements CrudService<Note, Long> {
 
   private final NoteRepository noteRepository;
@@ -42,12 +44,14 @@ public class NoteService implements CrudService<Note, Long> {
     return noteRepository.findNotesByDate(date);
   }
 
+  @Transactional
   public void addTagToNote(Tag tag, Note note) {
     note.getTags().add(tag);
     noteRepository.save(note);
   }
 
   /*TODO FIX THIS METHOD*/
+  @Transactional
   public void removeTagFromNote(Tag tag, Note note) {
     note.getTags().remove(tag);
     tag.getNotes().remove(note);
@@ -89,16 +93,18 @@ public class NoteService implements CrudService<Note, Long> {
     return noteRepository.findOne(id);
   }
 
+  @Transactional
   @Override
   public void saveOrUpdate(Note domainObject) {
     noteRepository.save(domainObject);
   }
 
+  @Transactional
   @Override
   public void delete(Long id) {
     noteRepository.delete(id);
   }
-
+  @Transactional
   public void deleteAll() {
     noteRepository.deleteAll();
   }
