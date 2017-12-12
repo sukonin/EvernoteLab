@@ -7,7 +7,9 @@ import java.util.List;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
 @Service
 @Log
 public class UserService implements CrudService<User, Long> {
@@ -33,11 +35,13 @@ public class UserService implements CrudService<User, Long> {
     return repository.findOne(id);
   }
 
+  @Transactional
   @Override
   public void saveOrUpdate(User domainObject) {
     repository.saveAndFlush(domainObject);
   }
 
+  @Transactional
   @Override
   public void delete(Long id) {
     repository.delete(id);

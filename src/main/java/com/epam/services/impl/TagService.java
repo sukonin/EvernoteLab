@@ -7,9 +7,11 @@ import java.util.List;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Log
 @Service
+@Transactional(readOnly = true)
 public class TagService implements CrudService<Tag, Long> {
 
   private final TagRepository tagRepository;
@@ -33,16 +35,19 @@ public class TagService implements CrudService<Tag, Long> {
     return tagRepository.getOne(id);
   }
 
+  @Transactional
   @Override
   public void saveOrUpdate(Tag domainObject) {
     tagRepository.save(domainObject);
   }
 
+  @Transactional
   @Override
   public void delete(Long id) {
     tagRepository.delete(id);
   }
 
+  @Transactional
   public void deleteAll() {
     tagRepository.deleteAll();
   }

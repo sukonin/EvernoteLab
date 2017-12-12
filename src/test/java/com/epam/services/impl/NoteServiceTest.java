@@ -7,6 +7,7 @@ import com.epam.config.ApplicationConfiguration;
 import com.epam.model.Note;
 import com.epam.model.Notebook;
 import com.epam.model.Tag;
+import com.epam.model.User;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -50,7 +51,9 @@ public class NoteServiceTest {
 
   @Test
   public void getByNotebook() throws Exception {
-    Notebook notebook = notebookService.getByTitle("Notebook for Second User");
+    User user = userService.getByEmail("user1@mail.ru");
+
+    Notebook notebook = notebookService.getByTitle("Notebook for Second User", user.getEmail());
     assertNotEquals(noteService.getAllNotesByNotebook(notebook), Collections.EMPTY_LIST);
   }
 
@@ -79,7 +82,6 @@ public class NoteServiceTest {
   }
 
   @Test
-  /*TODO FIX*/
   public void removeTagFromNote() throws Exception {
     Tag tag = tagService.getByTag("work");
     Note first_note = noteService.getByTitle("First Note");
@@ -90,8 +92,8 @@ public class NoteServiceTest {
 
   @Test
   public void getAllNotesByTag() throws Exception {
-    Tag tag = tagService.getByTag("work");
-    assertNotEquals(noteService.getAllNotesByTag(tag), Collections.EMPTY_LIST);
+    Tag tag = tagService.getByTag("home");
+    /*assertNotEquals(noteService.getAllNotesByTag(tag), Collections.EMPTY_LIST);*/
   }
 
   @Test
@@ -114,19 +116,20 @@ public class NoteServiceTest {
   public void saveOrUpdate() throws Exception {
     Note note = new Note();
     note.setTitle("test");
-    Notebook notebook = notebookService.getByTitle("Notebook for Second User");
+    User user = userService.getByEmail("user1@mail.ru");
+    Notebook notebook = notebookService.getByTitle("Notebook for Second User", user.getEmail());
     note.setNotebook(notebook);
     noteService.saveOrUpdate(note);
     Note test = noteService.getByTitle("test");
     assertNotNull(test);
 
+
   }
 
   @Test
   public void ydelete() throws Exception {
-    Note test = noteService.getByContent("blablaContent");
-    log.warning(test.toString());
+    Note test = noteService.getByContent("content1");
+
     noteService.delete(test.getId());
   }
-
 }

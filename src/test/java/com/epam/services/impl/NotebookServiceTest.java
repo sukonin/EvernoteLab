@@ -41,7 +41,9 @@ public class NotebookServiceTest {
 
   @Test
   public void getByTitle() throws Exception {
-    Notebook notebook = notebookService.getByTitle("First Notebook for first User");
+    User user = userService.getByEmail("user1@mail.ru");
+    Notebook notebook = notebookService
+        .getByTitle("First Notebook for first User", user.getEmail());
     log.info(notebook.toString());
     assertNotNull(notebook);
   }
@@ -53,16 +55,18 @@ public class NotebookServiceTest {
 
   @Test
   public void getById() throws Exception {
-    Notebook notebook = notebookService.getByTitle("First Notebook for first User");
+    User user = userService.getByEmail("user1@mail.ru");
+    Notebook notebook = notebookService.getByTitle("First Notebook for first User", user.getEmail());
     Notebook byId = notebookService.getById(notebook.getId());
     assertNotNull(byId);
   }
 
   @Test
   public void zdelete() throws Exception {
-    Notebook notebook = notebookService.getByTitle("Notebook for Second User");
+    User user = userService.getByEmail("user1@mail.ru");
+    Notebook notebook = notebookService.getByTitle("Notebook for Second User", user.getEmail());
     notebookService.delete(notebook.getId());
-    Notebook deleted = notebookService.getByTitle("Notebook for Second User");
+    Notebook deleted = notebookService.getByTitle("Notebook for Second User", user.getEmail());
     assertNull(deleted);
   }
 
