@@ -1,5 +1,6 @@
 package com.epam.services.impl;
 
+import com.epam.aspect.PerformanceMonitor;
 import com.epam.model.Notebook;
 import com.epam.model.User;
 import com.epam.repository.NotebookRepository;
@@ -22,38 +23,40 @@ public class NotebookService implements CrudService<Notebook, Long> {
     this.notebookRepository = notebookRepository;
   }
 
+  @PerformanceMonitor
   public List<Notebook> getAllNotebookByUser(User user) {
-    return notebookRepository.findByUser(user);
+    return notebookRepository.findNotebookByUser(user);
   }
 
+  @PerformanceMonitor
   public Notebook getByTitle(String title, String user) {
     return notebookRepository.findByTitleAndUserEmail(title, user);
   }
 
+  @PerformanceMonitor
   @Override
   public List<Notebook> getAll() {
     return notebookRepository.findAll();
   }
 
+  @PerformanceMonitor
   @Override
   public Notebook getById(Long id) {
     return notebookRepository.findOne(id);
   }
 
+  @PerformanceMonitor
   @Override
   @Transactional
   public void saveOrUpdate(Notebook notebook) {
     notebookRepository.saveAndFlush(notebook);
   }
 
+  @PerformanceMonitor
   @Override
   @Transactional
   public void delete(Long id) {
     notebookRepository.delete(id);
   }
 
-  @Transactional
-  public void deleteAll() {
-    notebookRepository.deleteAll();
-  }
 }

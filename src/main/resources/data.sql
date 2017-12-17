@@ -9,17 +9,17 @@ INSERT INTO user (id, email, password, username) VALUES (7, '7@epam.com', 'pass'
 INSERT INTO notebook (id, title, user_id) VALUES (1, 'title', 1);
 INSERT INTO notebook (id, title, user_id) VALUES (2, 'title2', 1);
 INSERT INTO notebook (id, title, user_id) VALUES (3, 'title', 2);
-INSERT INTO notebook (id, title, user_id) VALUES (4, 'title', 2);
-INSERT INTO notebook (id, title, user_id) VALUES (5, 'title', 3);
-INSERT INTO notebook (id, title, user_id) VALUES (6, 'title', 3);
-INSERT INTO notebook (id, title, user_id) VALUES (7, 'title', 4);
-INSERT INTO notebook (id, title, user_id) VALUES (8, 'title', 4);
-INSERT INTO notebook (id, title, user_id) VALUES (9, 'title', 5);
-INSERT INTO notebook (id, title, user_id) VALUES (10, 'title', 5);
-INSERT INTO notebook (id, title, user_id) VALUES (11, 'title', 5);
-INSERT INTO notebook (id, title, user_id) VALUES (12, 'title', 5);
-INSERT INTO notebook (id, title, user_id) VALUES (13, 'title', 6);
-INSERT INTO notebook (id, title, user_id) VALUES (14, 'title', 7);
+INSERT INTO notebook (id, title, user_id) VALUES (4, 'title2', 2);
+INSERT INTO notebook (id, title, user_id) VALUES (5, 'title1', 3);
+INSERT INTO notebook (id, title, user_id) VALUES (6, 'title2', 3);
+INSERT INTO notebook (id, title, user_id) VALUES (7, 'title1', 4);
+INSERT INTO notebook (id, title, user_id) VALUES (8, 'title2', 4);
+INSERT INTO notebook (id, title, user_id) VALUES (9, 'title1', 5);
+INSERT INTO notebook (id, title, user_id) VALUES (10, 'title2', 5);
+INSERT INTO notebook (id, title, user_id) VALUES (11, 'title3', 5);
+INSERT INTO notebook (id, title, user_id) VALUES (12, 'title4', 5);
+INSERT INTO notebook (id, title, user_id) VALUES (13, 'title1', 6);
+INSERT INTO notebook (id, title, user_id) VALUES (14, 'title1', 7);
 
 INSERT INTO note (id, content, date, isactive, title, notebook_id)
 VALUES (1, 'content', '2012-06-18', TRUE, 'title1', 1);
@@ -42,13 +42,13 @@ VALUES (9, 'content', '2012-06-18', TRUE, 'title3', 5);
 INSERT INTO note (id, content, date, isactive, title, notebook_id)
 VALUES (10, 'content1', '2012-06-18', FALSE, 'title1', 6);
 
-INSERT INTO tag (id, tag) VALUES (1, 'priority');
-INSERT INTO tag (id, tag) VALUES (2, 'home');
-INSERT INTO tag (id, tag) VALUES (3, 'vacation');
-INSERT INTO tag (id, tag) VALUES (4, 'work');
-INSERT INTO tag (id, tag) VALUES (5, 'holiday');
-INSERT INTO tag (id, tag) VALUES (6, 'dream');
-INSERT INTO tag (id, tag) VALUES (7, 'todo');
-INSERT INTO tag (id, tag) VALUES (8, 'what');
-INSERT INTO tag (id, tag) VALUES (9, 'F@ck');
-INSERT INTO tag (id, tag) VALUES (10, '05.42am...');
+INSERT INTO tag (id, tag, user_id) VALUES (1, 'priority', 1);
+INSERT INTO tag (id, tag, user_id) VALUES (2, 'home', 1);
+INSERT INTO tag (id, tag, user_id) VALUES (3, 'vacation', 1);
+INSERT INTO tag (id, tag, user_id) VALUES (4, 'work', 2);
+INSERT INTO tag (id, tag, user_id) VALUES (5, 'holiday', 2);
+INSERT INTO tag (id, tag, user_id) VALUES (6, 'dream', 2);
+INSERT INTO tag (id, tag, user_id) VALUES (7, 'todo', 1);
+INSERT INTO tag (id, tag, user_id) VALUES (8, 'what', 1);
+INSERT INTO tag (id, tag, user_id) VALUES (9, 'F@ck', 1);
+INSERT INTO tag (id, tag, user_id) VALUES (10, '05.42am...', 2);

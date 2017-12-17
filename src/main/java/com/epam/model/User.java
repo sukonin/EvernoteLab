@@ -1,41 +1,54 @@
 package com.epam.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import org.hibernate.validator.constraints.NotEmpty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 @Data
-@Entity(name = "user")
+@Entity
 @Table
 @NoArgsConstructor
-@ToString(exclude = {"notebookList"})
+@ToString(exclude = {"notebookList", "tags"})
+@EqualsAndHashCode(exclude = "tags")
 public class User implements Serializable {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @JsonIgnore
+  @GeneratedValue(strategy = GenerationType.SEQUENCE)
   private Long id;
-  @Column(unique=true)
+  @Column(unique = true)
   private String email;
   private String password;
   @Column(nullable = false)
   private String username;
 
-  @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = CascadeType.ALL,
+  @OneToMany( mappedBy = "user", cascade = CascadeType.ALL,
       orphanRemoval = true)
+  @JsonIgnore
+  @LazyCollection(LazyCollectionOption.FALSE)
   private List<Notebook> notebookList = new ArrayList<>();
+
+  @OneToMany( mappedBy = "user", cascade = CascadeType.ALL)
+  @JsonIgnore
+  @LazyCollection(LazyCollectionOption.FALSE)
+  private Set<Tag> tags = new HashSet<>();
 
 
 }

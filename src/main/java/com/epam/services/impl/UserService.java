@@ -1,5 +1,7 @@
 package com.epam.services.impl;
 
+import com.epam.aspect.PerformanceMonitor;
+import com.epam.model.Notebook;
 import com.epam.model.User;
 import com.epam.repository.UserRepository;
 import com.epam.services.CrudService;
@@ -14,37 +16,49 @@ import org.springframework.transaction.annotation.Transactional;
 @Log
 public class UserService implements CrudService<User, Long> {
 
-  private final UserRepository repository;
+  private final UserRepository userRepository;
+  private final NotebookService service;
 
   @Autowired
-  public UserService(UserRepository repository) {
-    this.repository = repository;
+  public UserService(UserRepository userRepository,
+      NotebookService service) {
+    this.userRepository = userRepository;
+    this.service = service;
   }
 
+  @PerformanceMonitor
   public User getByEmail(String email) {
-    return repository.findUserByEmail(email);
+    return userRepository.findUserByEmail(email);
   }
 
+  @PerformanceMonitor
   @Override
   public List<User> getAll() {
-    return repository.findAll();
+    return userRepository.findAll();
   }
 
+  @PerformanceMonitor
   @Override
   public User getById(Long id) {
-    return repository.findOne(id);
+    return userRepository.findOne(id);
   }
 
+  @PerformanceMonitor
   @Transactional
   @Override
   public void saveOrUpdate(User domainObject) {
-    repository.saveAndFlush(domainObject);
+    userRepository.save(domainObject);
+    Notebook defaultNotebook = new Notebook();
+    defaultNotebook.setTitle("Default Notebook");
+    defaultNotebook.setUser(domainObject);
+    service.saveOrUpdate(defaultNotebook);
   }
 
+  @PerformanceMonitor
   @Transactional
   @Override
   public void delete(Long id) {
-    repository.delete(id);
+    userRepository.delete(id);
   }
 
 }

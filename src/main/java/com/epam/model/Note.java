@@ -1,11 +1,12 @@
 package com.epam.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,20 +20,19 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 
 @Data
 @Entity
 @Table
 @ToString(exclude = {"notebook", "tags"})//Иначе StackOverFlow
+@JsonIgnoreProperties(value = "notebook")
 public class Note implements Serializable {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE)
+  @JsonIgnore
   private Long id;
   @Column(nullable = false)
   private String title;
@@ -45,12 +45,14 @@ public class Note implements Serializable {
 
   @ManyToOne(fetch = FetchType.LAZY, targetEntity = Notebook.class)
   @JoinColumn(name = "notebook_id",nullable = false)
+  @JsonIgnore
   private Notebook notebook;
 
-  @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(name = "note_tag",
       joinColumns = @JoinColumn(name = "note_id"),
       inverseJoinColumns = @JoinColumn(name = "tag_id"))
+  @JsonIgnore
   private List<Tag> tags = new ArrayList<>();
 
 }

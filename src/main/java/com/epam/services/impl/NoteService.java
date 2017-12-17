@@ -1,8 +1,10 @@
 package com.epam.services.impl;
 
+import com.epam.aspect.PerformanceMonitor;
 import com.epam.model.Note;
 import com.epam.model.Notebook;
 import com.epam.model.Tag;
+import com.epam.model.User;
 import com.epam.repository.NoteRepository;
 import com.epam.repository.TagRepository;
 import com.epam.services.CrudService;
@@ -20,67 +22,139 @@ import org.springframework.transaction.annotation.Transactional;
 public class NoteService implements CrudService<Note, Long> {
 
   private final NoteRepository noteRepository;
-  private final TagRepository tagRepository;
+  private final TagService tagService;
 
   @Autowired
-  public NoteService(NoteRepository noteRepository, TagRepository tagRepository) {
+  public NoteService(NoteRepository noteRepository, TagRepository tagRepository,
+      TagService tagService) {
     this.noteRepository = noteRepository;
-    this.tagRepository = tagRepository;
+    this.tagService = tagService;
   }
 
-  public Note getByTitle(String title) {
-    return noteRepository.findNoteByTitle(title);
-  }
+  @PerformanceMonitor
+  public List<Note> getByTitle(String title, User user) {
 
-  public List<Note> getByStatus(Boolean isActive) {
-    return noteRepository.findNotesByIsActive(isActive);
-  }
-
-  public Note getByContent(String content) {
-    return noteRepository.findNoteByContent(content);
-  }
-
-  public List<Note> getNotesByDate(Date date) {
-    return noteRepository.findNotesByDate(date);
-  }
-
-  @Transactional
-  public void addTagToNote(Tag tag, Note note) {
-    note.getTags().add(tag);
-    noteRepository.save(note);
-  }
-
-  /*TODO FIX THIS METHOD*/
-  @Transactional
-  public void removeTagFromNote(Tag tag, Note note) {
-    note.getTags().remove(tag);
-    tag.getNotes().remove(note);
-    noteRepository.save(note);
-    tagRepository.save(tag);
-  }
-
-  public List<Note> getAllNotesByTag(Tag tag) {
-    List<Note> notes = noteRepository.findAll();
     List<Note> result = new ArrayList<>();
-    for (Note note : notes) {
-      if (!note.getTags().isEmpty()) {
-        List<Tag> tags = note.getTags();
-        for (Tag tag1 : tags) {
-          if (tag1.getTag().equals(tag.getTag())) {
-            result.add(note);
-          }
+    List<Notebook> notebookList = user.getNotebookList();
+    for (Notebook notebook : notebookList) {
+      List<Note> notes = notebook.getNotes();
+      for (Note note : notes) {
+        if (note.getTitle().equals(title)) {
+          result.add(note);
         }
       }
     }
     return result;
   }
 
-  public List<Note> getAllNotesByTag(List<Tag> tags) {
-    return noteRepository.findNotesByTagsIn(tags);
+
+  @PerformanceMonitor
+  public List<Note> getByStatus(Boolean isActive, User user) {
+    List<Note> result = new ArrayList<>();
+    List<Notebook> notebookList = user.getNotebookList();
+    for (Notebook notebook : notebookList) {
+      List<Note> notes = notebook.getNotes();
+      for (Note note : notes) {
+        if (note.getIsActive().equals(isActive)) {
+          result.add(note);
+        }
+      }
+    }
+    return result;
   }
 
+  @PerformanceMonitor
+  public List<Note> getByContent(String content, User user) {
+    List<Note> result = new ArrayList<>();
+    List<Notebook> notebookList = user.getNotebookList();
+    for (Notebook notebook : notebookList) {
+      List<Note> notes = notebook.getNotes();
+      for (Note note : notes) {
+        if (note.getContent().contains(content)) {
+          result.add(note);
+        }
+      }
+    }
+    return result;
+  }
+
+  @PerformanceMonitor
+  public List<Note> getNotesByDate(Date date, User user) {
+
+    List<Note> result = new ArrayList<>();
+    List<Notebook> notebookList = user.getNotebookList();
+    for (Notebook notebook : notebookList) {
+      List<Note> notes = notebook.getNotes();
+      for (Note note : notes) {
+        if (note.getDate().equals(date)) {
+          result.add(note);
+        }
+      }
+    }
+    return result;
+  }
+
+  @Transactional
+  public void addTagToNote(Tag tag, String id, User user) {
+    Note note = noteRepository.getOne(Long.valueOf(id));
+
+    List<Note> notes = tag.getNotes();
+    notes.add(note);
+    tag.setNotes(notes);
+    tag.setUser(user);
+
+    List<Tag> tags = note.getTags();
+    tags.add(tag);
+    note.setTags(tags);
+
+    tagService.saveOrUpdate(tag);
+    saveOrUpdate(note);
+  }
+
+  @PerformanceMonitor
+  @Transactional
+  public void removeTagFromNote(Long note_id, Long tag_id) {
+    Tag tag = tagService.getById(tag_id);
+    Note note = noteRepository.getOne(note_id);
+
+    note.getTags().remove(tag);
+    tag.getNotes().remove(note);
+    noteRepository.saveAndFlush(note);
+    tagService.saveOrUpdate(tag);
+  }
+
+  /*TODO FIX IT*/
+  @PerformanceMonitor
+  public List<Note> getAllNotesByTag(String tag, User user) {
+    List<Note> all = getAll(user);
+    List<Note> result = new ArrayList<>();
+
+    for (Note note : all) {
+      System.err.println(note.getTags());
+      List<Tag> tags = note.getTags();
+      for (Tag tag1 : tags) {
+
+        List<Note> notes = tag1.getNotes();
+        System.err.println(notes);
+      }
+    }
+    return result;
+  }
+
+  @PerformanceMonitor
   public List<Note> getAllNotesByNotebook(Notebook notebook) {
     return noteRepository.findNotesByNotebook(notebook);
+  }
+
+  @PerformanceMonitor
+  public List<Note> getAll(User user) {
+    List<Notebook> notebookList = user.getNotebookList();
+    List<Note> result = new ArrayList<>();
+    for (Notebook notebook : notebookList) {
+      List<Note> notes = notebook.getNotes();
+      result.addAll(notes);
+    }
+    return result;
   }
 
   @Override
@@ -88,22 +162,27 @@ public class NoteService implements CrudService<Note, Long> {
     return noteRepository.findAll();
   }
 
+  @PerformanceMonitor
   @Override
   public Note getById(Long id) {
     return noteRepository.findOne(id);
   }
 
+  @PerformanceMonitor
   @Transactional
   @Override
   public void saveOrUpdate(Note domainObject) {
     noteRepository.save(domainObject);
   }
 
+  @PerformanceMonitor
   @Transactional
   @Override
   public void delete(Long id) {
     noteRepository.delete(id);
   }
+
+  @PerformanceMonitor
   @Transactional
   public void deleteAll() {
     noteRepository.deleteAll();
