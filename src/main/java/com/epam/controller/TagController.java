@@ -52,12 +52,10 @@ public class TagController {
 
 
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @DeleteMapping(value = "/tags/{tag}")
-  public void removeTag(@PathVariable("tag") String tag) {
-
-    User user = sessionData.getUser();
-    Tag byTag = tagService.getByTag(tag, user);
-    tagService.delete(byTag.getId());
+  @DeleteMapping(value = "/tags/{id}")
+  public void removeTag(@PathVariable("id") String id) {
+    Tag byId = tagService.getById(Long.valueOf(id));
+    tagService.delete(byId.getId());
 
   }
 

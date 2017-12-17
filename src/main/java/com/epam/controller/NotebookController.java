@@ -92,12 +92,12 @@ public class NotebookController {
   }
 
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @DeleteMapping(value = "/notebooks/{title}")
-  public void deleteNotebookByTitle(@PathVariable("title") String title) {
-    Notebook byTitle = notebookService
-        .getByTitle(title, sessionData.getUser().getEmail());
+  @DeleteMapping(value = "/notebooks/{id}")
+  public void deleteNotebookByTitle(@PathVariable("id") String id) {
 
-    notebookService.delete(byTitle.getId());
+    Notebook byId = notebookService.getById(Long.valueOf(id));
+
+    notebookService.delete(byId.getId());
 
   }
 
