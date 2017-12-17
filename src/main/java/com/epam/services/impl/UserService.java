@@ -26,10 +26,10 @@ public class UserService implements CrudService<User, Long> {
     this.service = service;
   }
 
+  @PerformanceMonitor
   public User getByEmail(String email) {
     return userRepository.findUserByEmail(email);
   }
-
 
   @PerformanceMonitor
   @Override
@@ -48,12 +48,9 @@ public class UserService implements CrudService<User, Long> {
   @Override
   public void saveOrUpdate(User domainObject) {
     userRepository.save(domainObject);
-
     Notebook defaultNotebook = new Notebook();
     defaultNotebook.setTitle("Default Notebook");
-
     defaultNotebook.setUser(domainObject);
-
     service.saveOrUpdate(defaultNotebook);
   }
 

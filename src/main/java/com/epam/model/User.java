@@ -3,7 +3,9 @@ package com.epam.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.LazyCollection;
@@ -23,6 +26,7 @@ import org.hibernate.annotations.LazyCollectionOption;
 @Table
 @NoArgsConstructor
 @ToString(exclude = {"notebookList", "tags"})
+@EqualsAndHashCode(exclude = "tags")
 public class User implements Serializable {
 
   @Id
@@ -44,7 +48,7 @@ public class User implements Serializable {
   @OneToMany( mappedBy = "user", cascade = CascadeType.ALL)
   @JsonIgnore
   @LazyCollection(LazyCollectionOption.FALSE)
-  private List<Tag> tags = new ArrayList<>();
+  private Set<Tag> tags = new HashSet<>();
 
 
 }

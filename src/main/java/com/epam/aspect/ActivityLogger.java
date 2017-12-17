@@ -17,18 +17,19 @@ public class ActivityLogger {
 
   private static boolean enabled;
 
-  @Pointcut("@annotation(PerformanceMonitor)&& if()")
+
+  @Pointcut("@annotation(PerformanceMonitor)")
   public static boolean pointCut() {
     return enabled;
   }
 
-  @Around("pointCut()" )
+  @Around("pointCut()")
   public Object logExecution(ProceedingJoinPoint joinPoint) throws Throwable {
     long start = System.currentTimeMillis();
     Object proceed = joinPoint.proceed();
     long time = System.currentTimeMillis() - start;
     log.info("**************************************");
-    log.info(joinPoint.getSignature().toShortString() + " executed in " + time);
+    log.info(joinPoint.getSignature().toShortString() + " executed in " + time + " ms!");
     log.info("**************************************");
     return proceed;
   }

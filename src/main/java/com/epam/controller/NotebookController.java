@@ -81,7 +81,7 @@ public class NotebookController {
 
   @ResponseStatus(HttpStatus.OK)
   @PutMapping(value = "/notebooks")
-  public void addNoteToNotebook(@RequestParam String notebook,
+  public void createNoteInNotebook(@RequestParam String notebook,
       @RequestBody @Valid Note note) {
     Notebook byTitle = notebookService
         .getByTitle(notebook, sessionData.getUser().getEmail());
