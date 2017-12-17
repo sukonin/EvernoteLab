@@ -1,6 +1,8 @@
 package com.epam.services.impl;
 
+import com.epam.aspect.PerformanceMonitor;
 import com.epam.model.Tag;
+import com.epam.model.User;
 import com.epam.repository.TagRepository;
 import com.epam.services.CrudService;
 import java.util.List;
@@ -21,32 +23,43 @@ public class TagService implements CrudService<Tag, Long> {
     this.tagRepository = tagRepository;
   }
 
-  public Tag getByTag(String tag) {
-    return tagRepository.getByTag(tag);
+  @PerformanceMonitor
+  public Tag getByTag(String tag, User user) {
+    return tagRepository.getByTagAndUser(tag, user);
   }
 
+  @PerformanceMonitor
+  public List<Tag> getByTagsByUser(User user) {
+    return tagRepository.findTagsByUser(user);
+  }
+
+  @PerformanceMonitor
   @Override
   public List<Tag> getAll() {
     return tagRepository.findAll();
   }
 
+  @PerformanceMonitor
   @Override
   public Tag getById(Long id) {
     return tagRepository.getOne(id);
   }
 
+  @PerformanceMonitor
   @Transactional
   @Override
   public void saveOrUpdate(Tag domainObject) {
     tagRepository.save(domainObject);
   }
 
+  @PerformanceMonitor
   @Transactional
   @Override
   public void delete(Long id) {
     tagRepository.delete(id);
   }
 
+  @PerformanceMonitor
   @Transactional
   public void deleteAll() {
     tagRepository.deleteAll();

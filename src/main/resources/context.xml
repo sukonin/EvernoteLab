@@ -2,16 +2,15 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:jdbc="http://www.springframework.org/schema/jdbc"
-  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+   http://www.springframework.org/schema/beans/spring-beans.xsd
+   http://www.springframework.org/schema/jdbc
+   http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
 
-  <bean id="h2Server" class="org.h2.tools.Server" factory-method="createTcpServer" init-method="start" destroy-method="stop" depends-on="h2WebServer">
-    <constructor-arg value="-tcp,-tcpAllowOthers,-tcpPort,9092"/>
-  </bean>
-  <bean id="h2WebServer" class="org.h2.tools.Server" factory-method="createWebServer" init-method="start" destroy-method="stop">
-    <constructor-arg value="-web,-webAllowOthers,-webPort,8082"/>
-  </bean>
+<!--
   <jdbc:initialize-database data-source="dataSource">
-    <jdbc:script location="classpath:/data.sql"/>
+    <jdbc:script location="classpath:/backup.sql"/>
   </jdbc:initialize-database>
+-->
 
 </beans>
