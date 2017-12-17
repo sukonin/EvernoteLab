@@ -24,7 +24,6 @@ public class ActivityLogger {
 
   @Around("pointCut()" )
   public Object logExecution(ProceedingJoinPoint joinPoint) throws Throwable {
-
     long start = System.currentTimeMillis();
     Object proceed = joinPoint.proceed();
     long time = System.currentTimeMillis() - start;
