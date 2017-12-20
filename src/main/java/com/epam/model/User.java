@@ -1,6 +1,10 @@
 package com.epam.model;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -9,6 +13,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,13 +25,15 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 
 @Data
 @Entity
 @Table
 @NoArgsConstructor
 @ToString(exclude = {"notebookList", "tags"})
-@EqualsAndHashCode(exclude = "tags")
+@EqualsAndHashCode(of = "id")
 public class User implements Serializable {
 
   @Id
@@ -36,19 +43,16 @@ public class User implements Serializable {
   @Column(unique = true)
   private String email;
   private String password;
+
   @Column(nullable = false)
   private String username;
 
-  @OneToMany( mappedBy = "user", cascade = CascadeType.ALL,
-      orphanRemoval = true)
   @JsonIgnore
-  @LazyCollection(LazyCollectionOption.FALSE)
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
   private List<Notebook> notebookList = new ArrayList<>();
 
-  @OneToMany( mappedBy = "user", cascade = CascadeType.ALL)
   @JsonIgnore
-  @LazyCollection(LazyCollectionOption.FALSE)
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
   private Set<Tag> tags = new HashSet<>();
-
 
 }

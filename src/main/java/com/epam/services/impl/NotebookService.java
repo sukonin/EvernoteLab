@@ -6,14 +6,16 @@ import com.epam.model.User;
 import com.epam.repository.NotebookRepository;
 import com.epam.services.CrudService;
 import java.util.List;
+import javax.jws.soap.SOAPBinding.Use;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Log
 @Transactional(readOnly = true)
+@Log
 public class NotebookService implements CrudService<Notebook, Long> {
 
   private final NotebookRepository notebookRepository;
@@ -25,12 +27,8 @@ public class NotebookService implements CrudService<Notebook, Long> {
 
   @PerformanceMonitor
   public List<Notebook> getAllNotebookByUser(User user) {
-    return notebookRepository.findNotebookByUser(user);
-  }
 
-  @PerformanceMonitor
-  public Notebook getByTitle(String title, String user) {
-    return notebookRepository.findByTitleAndUserEmail(title, user);
+    return notebookRepository.findNotebooksByUser_Id(user.getId());
   }
 
   @PerformanceMonitor
@@ -42,21 +40,21 @@ public class NotebookService implements CrudService<Notebook, Long> {
   @PerformanceMonitor
   @Override
   public Notebook getById(Long id) {
-    return notebookRepository.findOne(id);
+    return notebookRepository.findNotebookById(id);
   }
 
-  @PerformanceMonitor
-  @Override
+
   @Transactional
+  @PerformanceMonitor
   public void saveOrUpdate(Notebook notebook) {
-    notebookRepository.saveAndFlush(notebook);
+    notebookRepository.save(notebook);
   }
 
   @PerformanceMonitor
   @Override
   @Transactional
   public void delete(Long id) {
-    notebookRepository.delete(id);
+    notebookRepository.deleteById(id);
   }
 
 }

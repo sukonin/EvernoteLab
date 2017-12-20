@@ -1,8 +1,8 @@
 package com.epam.model;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.sql.Date;
 import java.util.ArrayList;
@@ -18,21 +18,26 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
+
 
 
 @Data
 @Entity
 @Table
-@ToString(exclude = {"notebook", "tags"})//Иначе StackOverFlow
-@JsonIgnoreProperties(value = "notebook")
+@ToString(exclude = {"notebook", "tags"})
+@EqualsAndHashCode(of = "id")
+@NoArgsConstructor
 public class Note implements Serializable {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE)
   @JsonIgnore
+  @GeneratedValue(strategy = GenerationType.SEQUENCE)
   private Long id;
   @Column(nullable = false)
   private String title;
@@ -41,18 +46,20 @@ public class Note implements Serializable {
   @Column(nullable = false)
   private Boolean isActive;
   @Column(nullable = false)
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
   private Date date;
 
-  @ManyToOne(fetch = FetchType.LAZY, targetEntity = Notebook.class)
-  @JoinColumn(name = "notebook_id",nullable = false)
   @JsonIgnore
+  @ManyToOne
+  @JoinColumn(name = "notebook_id")
+  @NotNull
   private Notebook notebook;
 
-  @ManyToMany(fetch = FetchType.EAGER)
+  @JsonIgnore
+  @ManyToMany
   @JoinTable(name = "note_tag",
       joinColumns = @JoinColumn(name = "note_id"),
       inverseJoinColumns = @JoinColumn(name = "tag_id"))
-  @JsonIgnore
   private List<Tag> tags = new ArrayList<>();
 
 }
