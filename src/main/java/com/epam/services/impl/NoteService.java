@@ -6,9 +6,7 @@ import com.epam.model.Notebook;
 import com.epam.model.Tag;
 import com.epam.model.User;
 import com.epam.repository.NoteRepository;
-import com.epam.repository.TagRepository;
 import com.epam.services.CrudService;
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.java.Log;
@@ -18,86 +16,23 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Log
 @Service
-@Transactional(readOnly = true)
+@Transactional
 public class NoteService implements CrudService<Note, Long> {
 
   private final NoteRepository noteRepository;
   private final TagService tagService;
 
   @Autowired
-  public NoteService(NoteRepository noteRepository, TagRepository tagRepository,
+  public NoteService(NoteRepository noteRepository,
       TagService tagService) {
     this.noteRepository = noteRepository;
     this.tagService = tagService;
   }
 
   @PerformanceMonitor
-  public List<Note> getByTitle(String title, User user) {
-
-    List<Note> result = new ArrayList<>();
-    List<Notebook> notebookList = user.getNotebookList();
-    for (Notebook notebook : notebookList) {
-      List<Note> notes = notebook.getNotes();
-      for (Note note : notes) {
-        if (note.getTitle().equals(title)) {
-          result.add(note);
-        }
-      }
-    }
-    return result;
-  }
-
-
-  @PerformanceMonitor
-  public List<Note> getByStatus(Boolean isActive, User user) {
-    List<Note> result = new ArrayList<>();
-    List<Notebook> notebookList = user.getNotebookList();
-    for (Notebook notebook : notebookList) {
-      List<Note> notes = notebook.getNotes();
-      for (Note note : notes) {
-        if (note.getIsActive().equals(isActive)) {
-          result.add(note);
-        }
-      }
-    }
-    return result;
-  }
-
-  @PerformanceMonitor
-  public List<Note> getByContent(String content, User user) {
-    List<Note> result = new ArrayList<>();
-    List<Notebook> notebookList = user.getNotebookList();
-    for (Notebook notebook : notebookList) {
-      List<Note> notes = notebook.getNotes();
-      for (Note note : notes) {
-        if (note.getContent().contains(content)) {
-          result.add(note);
-        }
-      }
-    }
-    return result;
-  }
-
-  @PerformanceMonitor
-  public List<Note> getNotesByDate(Date date, User user) {
-
-    List<Note> result = new ArrayList<>();
-    List<Notebook> notebookList = user.getNotebookList();
-    for (Notebook notebook : notebookList) {
-      List<Note> notes = notebook.getNotes();
-      for (Note note : notes) {
-        if (note.getDate().equals(date)) {
-          result.add(note);
-        }
-      }
-    }
-    return result;
-  }
-
-  @Transactional
-  public void addTagToNote(Tag tag, String id, User user) {
-    Note note = noteRepository.getOne(Long.valueOf(id));
-
+  public void addTagToNote(Long tag_id, Long note_id, User user) {
+    Note note = noteRepository.getOne(note_id);
+    Tag tag = tagService.getById(tag_id);
     List<Note> notes = tag.getNotes();
     notes.add(note);
     tag.setNotes(notes);
@@ -112,7 +47,6 @@ public class NoteService implements CrudService<Note, Long> {
   }
 
   @PerformanceMonitor
-  @Transactional
   public void removeTagFromNote(Long note_id, Long tag_id) {
     Tag tag = tagService.getById(tag_id);
     Note note = noteRepository.getOne(note_id);
@@ -123,19 +57,16 @@ public class NoteService implements CrudService<Note, Long> {
     tagService.saveOrUpdate(tag);
   }
 
-  /*TODO FIX IT*/
   @PerformanceMonitor
   public List<Note> getAllNotesByTag(String tag, User user) {
     List<Note> all = getAll(user);
     List<Note> result = new ArrayList<>();
-
     for (Note note : all) {
-      System.err.println(note.getTags());
       List<Tag> tags = note.getTags();
       for (Tag tag1 : tags) {
-
-        List<Note> notes = tag1.getNotes();
-        System.err.println(notes);
+        if (tag1.getTag().equals(tag)) {
+          result.add(note);
+        }
       }
     }
     return result;
@@ -148,13 +79,7 @@ public class NoteService implements CrudService<Note, Long> {
 
   @PerformanceMonitor
   public List<Note> getAll(User user) {
-    List<Notebook> notebookList = user.getNotebookList();
-    List<Note> result = new ArrayList<>();
-    for (Notebook notebook : notebookList) {
-      List<Note> notes = notebook.getNotes();
-      result.addAll(notes);
-    }
-    return result;
+    return noteRepository.findNotesByNotebook_User_Id(user.getId());
   }
 
   @Override
@@ -162,29 +87,22 @@ public class NoteService implements CrudService<Note, Long> {
     return noteRepository.findAll();
   }
 
-  @PerformanceMonitor
   @Override
   public Note getById(Long id) {
-    return noteRepository.findOne(id);
+    return noteRepository.findNoteById(id);
   }
 
   @PerformanceMonitor
-  @Transactional
   @Override
   public void saveOrUpdate(Note domainObject) {
     noteRepository.save(domainObject);
   }
 
   @PerformanceMonitor
-  @Transactional
   @Override
   public void delete(Long id) {
-    noteRepository.delete(id);
+    noteRepository.deleteById(id);
   }
 
-  @PerformanceMonitor
-  @Transactional
-  public void deleteAll() {
-    noteRepository.deleteAll();
-  }
+
 }

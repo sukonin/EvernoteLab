@@ -1,7 +1,11 @@
 package com.epam.model;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,36 +22,35 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
+
 
 @Entity
 @Table
 @Data
 @NoArgsConstructor
 @ToString(exclude = {"user", "notes"})
-@JsonIgnoreProperties(value = "user")
+@EqualsAndHashCode(of = "id")
 public class Notebook implements Serializable {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE)
   @JsonIgnore
+  @GeneratedValue(strategy = GenerationType.SEQUENCE)
   private Long id;
   @Column(nullable = false)
   @NotNull
   private String title;
 
-  @ManyToOne(fetch = FetchType.LAZY, targetEntity = User.class)
-  @JoinColumn(name = "user_id", nullable = false)
+  @ManyToOne
+  @JoinColumn(name = "user_id")
+  @NotNull
   @JsonIgnore
   private User user;
 
-  @OneToMany(mappedBy = "notebook", cascade = CascadeType.ALL,
-      orphanRemoval = true)
   @JsonIgnore
-  @LazyCollection(LazyCollectionOption.FALSE)
+  @OneToMany(mappedBy = "notebook", cascade = CascadeType.ALL)
   private List<Note> notes = new ArrayList<>();
 
 

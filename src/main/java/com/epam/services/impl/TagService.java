@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Log
 @Service
-@Transactional(readOnly = true)
+@Transactional
 public class TagService implements CrudService<Tag, Long> {
 
   private final TagRepository tagRepository;
@@ -42,26 +42,19 @@ public class TagService implements CrudService<Tag, Long> {
   @PerformanceMonitor
   @Override
   public Tag getById(Long id) {
-    return tagRepository.getOne(id);
+    return tagRepository.findTagById(id);
   }
 
   @PerformanceMonitor
-  @Transactional
   @Override
   public void saveOrUpdate(Tag domainObject) {
     tagRepository.save(domainObject);
   }
 
   @PerformanceMonitor
-  @Transactional
   @Override
   public void delete(Long id) {
-    tagRepository.delete(id);
+    tagRepository.deleteById(id);
   }
 
-  @PerformanceMonitor
-  @Transactional
-  public void deleteAll() {
-    tagRepository.deleteAll();
-  }
 }

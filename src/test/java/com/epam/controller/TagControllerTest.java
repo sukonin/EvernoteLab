@@ -1,15 +1,22 @@
 package com.epam.controller;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 import com.epam.WebContextTestExecutionListener;
+import com.epam.config.ApplicationConfiguration;
 import com.epam.config.web.WebApplication;
 import com.epam.config.web.WebConfig;
+import com.epam.model.SessionData;
+import com.epam.model.Tag;
 import com.epam.model.User;
+import com.epam.services.impl.NotebookService;
 import com.epam.services.impl.UserService;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.annotation.Resource;
 import org.junit.Before;
@@ -38,10 +45,8 @@ import org.springframework.web.context.WebApplicationContext;
     DependencyInjectionTestExecutionListener.class,
     DirtiesContextTestExecutionListener.class,
     TransactionalTestExecutionListener.class})
-public class UserControllerTest {
+public class TagControllerTest {
 
-  @Autowired
-  private UserService userService;
   @Autowired
   private WebApplicationContext wac;
   @Autowired
@@ -57,45 +62,68 @@ public class UserControllerTest {
   }
 
   @Test
-  public void createUser() throws Exception {
-    User user = new User();
-    user.setEmail("user@email.com");
-    user.setUsername("username");
-    user.setPassword("super_security");
+  public void getById() throws Exception {
+    mvc.perform(get("/tags/1")
+        .with(httpBasic("test", "test"))
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status()
+            .isOk());
+  }
+
+  @Test
+  public void createTag() throws Exception {
+    Tag tag = new Tag();
+    tag.setTag("test");
 
     ObjectMapper objectMapper = new ObjectMapper();
-    String jsonObject = objectMapper.writeValueAsString(user);
+    String jsonObject = objectMapper.writeValueAsString(tag);
 
-    mvc.perform(post("/registration")
+    mvc.perform(post("/tags")
         .content(jsonObject)
+        .with(httpBasic("test", "test"))
         .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isCreated());
   }
 
   @Test
-  public void getAllUsers() throws Exception {
-    mvc.perform(get("/users")
-        .with(httpBasic("test","test"))
+  public void removeTag() throws Exception {
+    mvc.perform(delete("/tags/2")
+        .with(httpBasic("test", "test"))
         .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk());
+        .andExpect(status().isNoContent());
   }
 
   @Test
-  public void updateUser() throws Exception {
-
-    User user = userService.getById(8L);
-    ObjectMapper objectMapper = new ObjectMapper();
-    user.setUsername("Another Name");
-
-    String json = objectMapper.writeValueAsString(user);
-
-    mvc.perform(put("/users/1")
-        .with(httpBasic("test","test"))
-        .content(json)
+  public void getAllTagsByUser() throws Exception {
+    mvc.perform(get("/tags")
+        .with(httpBasic("test", "test"))
         .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk());
   }
 
+
+  @Test
+  public void updateTag() throws Exception {
+    String contentAsString = mvc.perform(get("/tags/1")
+        .contentType(MediaType.APPLICATION_JSON)
+        .with(httpBasic("test", "test")))
+        .andExpect(status().isOk())
+        .andReturn()
+        .getResponse()
+        .getContentAsString();
+
+    ObjectMapper objectMapper = new ObjectMapper();
+    Tag tag = objectMapper.readValue(contentAsString, Tag.class);
+    tag.setTag("another tag");
+    String json = objectMapper.writeValueAsString(tag);
+
+    mvc.perform(put("/tags/1")
+        .with(httpBasic("test", "test"))
+        .content(json)
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk());
+
+  }
 
 
 }

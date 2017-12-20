@@ -3,11 +3,12 @@ package com.epam.controller;
 import com.epam.model.SessionData;
 import com.epam.model.User;
 import com.epam.services.impl.UserService;
+import javax.servlet.http.HttpSession;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,31 +16,31 @@ import org.springframework.web.bind.annotation.RestController;
 @Log
 public class SessionController {
 
-  private final UserService userService;
   private final SessionData sessionData;
+  private final UserService userService;
 
   @Autowired
-  public SessionController(UserService userService, SessionData sessionData) {
-    this.userService = userService;
+  public SessionController(SessionData sessionData, UserService userService) {
     this.sessionData = sessionData;
+    this.userService = userService;
   }
 
-  @ResponseStatus(HttpStatus.OK)
-  @PostMapping(value = "/login")
-  public void login(@RequestParam String email, @RequestParam String password) {
 
-    email = "1@epam.com";
-    User user = userService.getByEmail(email);
+  @GetMapping("/success")
+  public String success() {
+    return "Success!!!";
+  }
 
-    sessionData.setUser(user);
-    if (user != null && user.getPassword().equals(password)) {
-    }
+  @GetMapping("/login")
+  public String login() {
+    return "login";
   }
 
   @ResponseStatus(HttpStatus.OK)
   @PostMapping(value = "/logout")
-  public void logout() {
+  public void logout(HttpSession session) {
     sessionData.setUser(null);
+    session.invalidate();
   }
 
 }

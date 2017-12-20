@@ -1,6 +1,9 @@
 # EvernoteLab
 HomeWork SpringLab December
 
+Spring MVC + Spring Security + AOP
+Swagger + Jacoco
+
 
 | URL Path                                 | Request methods | Result                                                           |
 |------------------------------------------|-----------------|------------------------------------------------------------------|

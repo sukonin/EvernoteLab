@@ -1,17 +1,20 @@
 package com.epam.controller;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.epam.WebContextTestExecutionListener;
 import com.epam.config.web.WebApplication;
 import com.epam.config.web.WebConfig;
-import com.epam.model.User;
-import com.epam.services.impl.UserService;
+import com.epam.model.Notebook;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.annotation.Resource;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,6 +33,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+
 @ContextConfiguration(classes = {WebApplication.class, WebConfig.class})
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -38,10 +42,8 @@ import org.springframework.web.context.WebApplicationContext;
     DependencyInjectionTestExecutionListener.class,
     DirtiesContextTestExecutionListener.class,
     TransactionalTestExecutionListener.class})
-public class UserControllerTest {
+public class NotebookControllerTest {
 
-  @Autowired
-  private UserService userService;
   @Autowired
   private WebApplicationContext wac;
   @Autowired
@@ -52,50 +54,71 @@ public class UserControllerTest {
   @Before
   public void setupSpec() throws Exception {
     mvc = MockMvcBuilders.webAppContextSetup(wac)
+        .apply(springSecurity())
         .addFilter(springSecurityFilterChain)
         .build();
   }
 
   @Test
-  public void createUser() throws Exception {
-    User user = new User();
-    user.setEmail("user@email.com");
-    user.setUsername("username");
-    user.setPassword("super_security");
+  public void getById() throws Exception {
+    mvc.perform(get("/notebooks/1")
+        .with(httpBasic("test", "test"))
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk());
+  }
+
+  @Test
+  public void getAllNotebookByUser() throws Exception {
+    mvc.perform(get("/notebooks")
+        .with(httpBasic("test", "test"))
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk());
+  }
+
+  @Test
+  public void createNotebook() throws Exception {
+
+    Notebook notebook = new Notebook();
+    notebook.setTitle("test");
 
     ObjectMapper objectMapper = new ObjectMapper();
-    String jsonObject = objectMapper.writeValueAsString(user);
+    String jsonObject = objectMapper.writeValueAsString(notebook);
 
-    mvc.perform(post("/registration")
+    mvc.perform(post("/notebooks")
+        .with(httpBasic("test", "test"))
         .content(jsonObject)
         .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isCreated());
   }
 
   @Test
-  public void getAllUsers() throws Exception {
-    mvc.perform(get("/users")
-        .with(httpBasic("test","test"))
+  public void deleteNotebookById() throws Exception {
+    mvc.perform(delete("/notebooks/2")
+        .with(httpBasic("test", "test"))
         .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk());
+        .andExpect(status().isNoContent());
   }
 
   @Test
-  public void updateUser() throws Exception {
+  public void updateNotebook() throws Exception {
+    String contentAsString =
+        mvc.perform(get("/notebooks/1")
+        .with(httpBasic("test", "test"))
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
-    User user = userService.getById(8L);
     ObjectMapper objectMapper = new ObjectMapper();
-    user.setUsername("Another Name");
+    Notebook notebook = objectMapper.readValue(contentAsString, Notebook.class);
+    notebook.setTitle("another title");
 
-    String json = objectMapper.writeValueAsString(user);
+    String json = objectMapper.writeValueAsString(notebook);
 
-    mvc.perform(put("/users/1")
-        .with(httpBasic("test","test"))
+    mvc.perform(put("/notebooks/1")
+        .with(httpBasic("test", "test"))
         .content(json)
         .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk());
+
   }
-
-
 
 }
