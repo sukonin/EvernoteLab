@@ -5,9 +5,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import com.epam.WebContextTestExecutionListener;
-import com.epam.config.web.WebApplication;
-import com.epam.config.web.WebConfig;
+import com.epam.config.ApplicationConfiguration;
 import com.epam.model.User;
 import com.epam.services.impl.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,7 +14,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.security.web.FilterChainProxy;
 import org.springframework.test.context.ContextConfiguration;
@@ -24,27 +21,20 @@ import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
-import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-@ContextConfiguration(classes = {WebApplication.class, WebConfig.class})
+@ContextConfiguration(classes = {ApplicationConfiguration.class})
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
-@AutoConfigureMockMvc
-@TestExecutionListeners({WebContextTestExecutionListener.class,
-    DependencyInjectionTestExecutionListener.class,
-    DirtiesContextTestExecutionListener.class,
-    TransactionalTestExecutionListener.class})
 public class UserControllerTest {
 
   @Autowired
   private UserService userService;
   @Autowired
   private WebApplicationContext wac;
-  @Autowired
   private MockMvc mvc;
   @Resource
   private FilterChainProxy springSecurityFilterChain;

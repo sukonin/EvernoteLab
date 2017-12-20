@@ -49,7 +49,6 @@ public class User implements Serializable {
 
   @JsonIgnore
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-  @LazyCollection(LazyCollectionOption.FALSE)
   private List<Notebook> notebookList = new ArrayList<>();
 
   @JsonIgnore

@@ -1,7 +1,6 @@
 package com.epam.controller;
 
 
-import com.epam.model.SessionData;
 import com.epam.model.User;
 import com.epam.services.impl.UserService;
 import java.util.List;
@@ -20,12 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
   private final UserService userService;
-  private final SessionData sessionData;
 
   @Autowired
-  public UserController(UserService userService, SessionData sessionData) {
+  public UserController(UserService userService) {
     this.userService = userService;
-    this.sessionData = sessionData;
   }
 
   @ResponseStatus(HttpStatus.OK)

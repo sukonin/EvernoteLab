@@ -1,6 +1,5 @@
 package com.epam.config.security;
 
-import com.epam.model.SessionData;
 import com.epam.model.User;
 import com.epam.services.impl.UserService;
 import java.util.ArrayList;
@@ -17,12 +16,11 @@ import org.springframework.stereotype.Component;
 public class UserAuthenticationProvider implements AuthenticationProvider {
 
   private final UserService userService;
-  private final SessionData sessionData;
+
 
   @Autowired
-  public UserAuthenticationProvider(UserService userService, SessionData sessionData) {
+  public UserAuthenticationProvider(UserService userService) {
     this.userService = userService;
-    this.sessionData = sessionData;
   }
 
   @Override
@@ -40,7 +38,7 @@ public class UserAuthenticationProvider implements AuthenticationProvider {
     if (!access) {
       throw new BadCredentialsException("Wrong password");
     }
-    sessionData.setUser(user);
+
 
     return new UsernamePasswordAuthenticationToken(user.getEmail(), password, new ArrayList<>());
   }

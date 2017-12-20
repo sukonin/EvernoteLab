@@ -20,13 +20,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService implements CrudService<User, Long> {
 
   private final UserRepository userRepository;
-  private final NotebookService notebookService;
+  /*private final NotebookService notebookService;*/
 
   @Autowired
   public UserService(UserRepository userRepository,
       NotebookService notebookService) {
     this.userRepository = userRepository;
-    this.notebookService = notebookService;
+    /*this.notebookService = notebookService;*/
   }
 
   @PerformanceMonitor
@@ -61,10 +61,10 @@ public class UserService implements CrudService<User, Long> {
     user.setPassword(password);
     userRepository.save(user);
 
-    Notebook defaultNotebook = new Notebook();
+  /*  Notebook defaultNotebook = new Notebook();
     defaultNotebook.setTitle("Default Notebook");
     defaultNotebook.setUser(user);
-    notebookService.saveOrUpdate(defaultNotebook);
+    notebookService.saveOrUpdate(defaultNotebook);*/
   }
 
   @PerformanceMonitor

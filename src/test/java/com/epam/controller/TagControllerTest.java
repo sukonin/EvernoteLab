@@ -7,11 +7,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 
-import com.epam.WebContextTestExecutionListener;
 import com.epam.config.ApplicationConfiguration;
 import com.epam.config.web.WebApplication;
 import com.epam.config.web.WebConfig;
-import com.epam.model.SessionData;
 import com.epam.model.Tag;
 import com.epam.model.User;
 import com.epam.services.impl.NotebookService;
@@ -23,7 +21,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.security.web.FilterChainProxy;
 import org.springframework.test.context.ContextConfiguration;
@@ -37,19 +34,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-@ContextConfiguration(classes = {WebApplication.class, WebConfig.class})
+@ContextConfiguration(classes = {ApplicationConfiguration.class})
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
-@AutoConfigureMockMvc
-@TestExecutionListeners({WebContextTestExecutionListener.class,
-    DependencyInjectionTestExecutionListener.class,
-    DirtiesContextTestExecutionListener.class,
-    TransactionalTestExecutionListener.class})
 public class TagControllerTest {
 
   @Autowired
   private WebApplicationContext wac;
-  @Autowired
+
   private MockMvc mvc;
   @Resource
   private FilterChainProxy springSecurityFilterChain;

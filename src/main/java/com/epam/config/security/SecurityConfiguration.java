@@ -1,17 +1,12 @@
 package com.epam.config.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableGlobalMethodSecurity(securedEnabled = true)
@@ -20,7 +15,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
   private final UserAuthenticationProvider userAuthenticationProvider;
 
-  @Autowired
   public SecurityConfiguration(UserAuthenticationProvider userAuthenticationProvider) {
     this.userAuthenticationProvider = userAuthenticationProvider;
   }
@@ -31,7 +25,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     http.httpBasic();
 
     http.authorizeRequests()
-        .antMatchers("/registration").anonymous();
+        .antMatchers("/registration").permitAll();
 
     //Private
     http.authorizeRequests().antMatchers("/notebooks/**").authenticated();
@@ -39,7 +33,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     http.authorizeRequests().antMatchers("/notes/**").authenticated();
     http.authorizeRequests().antMatchers("/tags/**").authenticated();
 
-/*
     // Logout
     http.logout().logoutUrl("/logout");
     http.logout().logoutSuccessUrl("/");
@@ -50,8 +43,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     //
     http.formLogin().defaultSuccessUrl("/success");
     http.formLogin().failureUrl("/loginerror");
-*/
 
+    http.logout()
+        .clearAuthentication(true)
+        .invalidateHttpSession(true)
+        .deleteCookies("JSESSIONID");
 
   }
 
@@ -60,13 +56,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
       throws Exception {
     auth.authenticationProvider(userAuthenticationProvider);
   }
-
- /* @Bean
-  CorsConfigurationSource corsConfigurationSource() {
-    final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
-    return source;
-  }*/
 
 
 }

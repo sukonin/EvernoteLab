@@ -2,7 +2,6 @@ package com.epam.controller;
 
 import com.epam.model.Note;
 import com.epam.model.Notebook;
-import com.epam.model.SessionData;
 import com.epam.model.User;
 import com.epam.services.impl.NoteService;
 import com.epam.services.impl.NotebookService;
@@ -12,6 +11,7 @@ import javax.validation.Valid;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,22 +29,24 @@ public class NoteController {
 
   private final NotebookService notebookService;
   private final NoteService noteService;
-  private final SessionData sessionData;
+  private final UserService userService;
 
   @Autowired
-  public NoteController(NotebookService notebookService,
-      NoteService noteService,
-      SessionData sessionData) {
+  public NoteController(NotebookService notebookService, NoteService noteService,
+      UserService userService) {
     this.notebookService = notebookService;
     this.noteService = noteService;
-    this.sessionData = sessionData;
+    this.userService = userService;
   }
 
 
   @ResponseStatus(HttpStatus.OK)
   @GetMapping(value = "/notes")
   public List<Note> getAllNotes() {
-    return noteService.getAll(sessionData.getUser());
+    Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    User user = userService.getByEmail(principal.toString());
+
+    return noteService.getAll(user);
   }
 
   @ResponseStatus(HttpStatus.OK)
@@ -82,7 +84,7 @@ public class NoteController {
 
 
   @ResponseStatus(HttpStatus.OK)
-  @GetMapping(value = "/notebooks/{id}/note")
+  @GetMapping(value = "/notebooks/{id}/notes")
   public List<Note> getAllNotesByNotebook(@PathVariable("id") Long notebook_id) {
     Notebook notebook = notebookService.getById(notebook_id);
     return noteService.getAllNotesByNotebook(notebook);
@@ -92,7 +94,9 @@ public class NoteController {
   @PutMapping(value = "/notes/{note_id}/{tag_id}")
   public void addTagToNote(@PathVariable("tag_id") Long tag_id,
       @PathVariable("note_id") Long note_id) {
-    User user = sessionData.getUser();
+    Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    User user = userService.getByEmail(principal.toString());
+
     noteService.addTagToNote(tag_id, note_id, user);
   }
 
@@ -108,8 +112,10 @@ public class NoteController {
   @ResponseStatus(HttpStatus.OK)
   @GetMapping(value = "/notes/tag/{tag}")
   public List<Note> getAllNotesByTag(@PathVariable("tag") String tag) {
+    Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    User user = userService.getByEmail(principal.toString());
 
-    return noteService.getAllNotesByTag(tag, sessionData.getUser());
+    return noteService.getAllNotesByTag(tag, user);
 
   }
 

@@ -1,14 +1,16 @@
 package com.epam.controller;
 
-import com.epam.model.SessionData;
+
 import com.epam.model.Tag;
 import com.epam.model.User;
 import com.epam.services.impl.TagService;
+import com.epam.services.impl.UserService;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,54 +24,54 @@ import org.springframework.web.bind.annotation.RestController;
 @Log
 public class TagController {
 
-  private final SessionData sessionData;
   private final TagService tagService;
+  private final UserService userService;
 
   @Autowired
-  public TagController(SessionData sessionData, TagService tagService) {
-    this.sessionData = sessionData;
+  public TagController(TagService tagService, UserService userService) {
     this.tagService = tagService;
+    this.userService = userService;
   }
 
   @ResponseStatus(HttpStatus.OK)
   @GetMapping(value = "/tags")
   public List<Tag> getAllTagsByUser() {
-    System.err.println(sessionData.getUser());
+    Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    User user = userService.getByEmail(principal.toString());
 
-    return tagService.getByTagsByUser(sessionData.getUser());
+    return tagService.getByTagsByUser(user);
   }
 
   @ResponseStatus(HttpStatus.OK)
   @GetMapping(value = "/tags/{id}")
   public Tag getById(@PathVariable("id") Long id) {
-    System.err.println(sessionData.getUser());
-
     return tagService.getById(id);
   }
 
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping(value = "/tags")
   public void createTag(@RequestBody Tag tag) {
-    tag.setUser(sessionData.getUser());
-    System.err.println(sessionData.getUser());
+    Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    User user = userService.getByEmail(principal.toString());
+
+    tag.setUser(user);
     tagService.saveOrUpdate(tag);
   }
 
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @DeleteMapping(value = "/tags/{id}")
   public void removeTag(@PathVariable("id") Long id) {
-    System.err.println(sessionData.getUser());
-
     tagService.delete(id);
   }
 
   @ResponseStatus(HttpStatus.OK)
   @PutMapping(value = "/tags/{id}")
   public void updateTag(@PathVariable Long id, @RequestBody Tag tag) {
-    System.err.println(sessionData.getUser());
+    Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    User user = userService.getByEmail(principal.toString());
 
     tag.setId(id);
-    tag.setUser(sessionData.getUser());
+    tag.setUser(user);
     tagService.saveOrUpdate(tag);
   }
 
