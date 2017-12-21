@@ -67,7 +67,7 @@ public class NotebookController {
     notebookService.saveOrUpdate(notebook);
   }
 
-  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseStatus(HttpStatus.OK)
   @DeleteMapping(value = "/notebooks/{id}")
   public void deleteNotebookById(@PathVariable("id") Long id) {
     notebookService.delete(id);

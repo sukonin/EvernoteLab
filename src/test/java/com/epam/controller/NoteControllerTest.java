@@ -80,7 +80,7 @@ public class NoteControllerTest {
     mvc.perform(delete("/notes/1")
         .with(httpBasic("test", "test"))
         .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isNoContent());
+        .andExpect(status().isOk());
   }
 
   @Test

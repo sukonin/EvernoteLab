@@ -26,7 +26,6 @@ public class SessionController {
     return "Logout success!";
   }
 
-
   @GetMapping("/error")
   @ResponseBody
   public String error() {
