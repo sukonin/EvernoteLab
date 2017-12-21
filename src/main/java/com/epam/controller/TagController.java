@@ -1,12 +1,12 @@
 package com.epam.controller;
 
 
+import com.epam.exception.NotFoundException;
 import com.epam.model.Tag;
 import com.epam.model.User;
 import com.epam.services.impl.TagService;
 import com.epam.services.impl.UserService;
 import java.util.List;
-import javax.validation.Valid;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -45,7 +46,11 @@ public class TagController {
   @ResponseStatus(HttpStatus.OK)
   @GetMapping(value = "/tags/{id}")
   public Tag getById(@PathVariable("id") Long id) {
-    return tagService.getById(id);
+    Tag tag = tagService.getById(id);
+    if (tag == null) {
+      throw new NotFoundException("Note with id:" + id + " not found!");
+    }
+    return tag;
   }
 
   @ResponseStatus(HttpStatus.CREATED)

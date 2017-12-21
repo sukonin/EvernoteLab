@@ -35,10 +35,10 @@ public class UserAuthenticationProvider implements AuthenticationProvider {
     String password = (String) authentication.getCredentials();
 
     boolean access = new BCryptPasswordEncoder().matches(password, user.getPassword());
+
     if (!access) {
       throw new BadCredentialsException("Wrong password");
     }
-
 
     return new UsernamePasswordAuthenticationToken(user.getEmail(), password, new ArrayList<>());
   }

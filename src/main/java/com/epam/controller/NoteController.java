@@ -1,5 +1,7 @@
 package com.epam.controller;
 
+import com.epam.exception.NotFoundException;
+import com.epam.exception.RestExceptionHandler;
 import com.epam.model.Note;
 import com.epam.model.Notebook;
 import com.epam.model.User;
@@ -7,7 +9,6 @@ import com.epam.services.impl.NoteService;
 import com.epam.services.impl.NotebookService;
 import com.epam.services.impl.UserService;
 import java.util.List;
-import javax.validation.Valid;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -52,7 +53,13 @@ public class NoteController {
   @ResponseStatus(HttpStatus.OK)
   @GetMapping(value = "/notes/{id}")
   public Note getNoteById(@PathVariable("id") Long id) {
-    return noteService.getById(id);
+
+    Note note = noteService.getById(id);
+    if (note == null) {
+      throw new NotFoundException("Note with id:" + id + " not found!");
+    }
+    return note;
+
   }
 
   @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -78,6 +85,7 @@ public class NoteController {
     Note note1 = noteService.getById(id);
     note.setNotebook(note1.getNotebook());
     note.setId(id);
+    note.setTags(note1.getTags());
 
     noteService.saveOrUpdate(note);
   }

@@ -4,9 +4,9 @@ package com.epam.controller;
 import com.epam.model.User;
 import com.epam.services.impl.UserService;
 import java.util.List;
-import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,9 +39,9 @@ public class UserController {
 
   @ResponseStatus(HttpStatus.OK)
   @PutMapping(value = "/users/{id}")
-  public void updateUser(@PathVariable("id") Long id, @Valid @RequestBody User user) {
-      user.setId(id);
-      userService.update(user);
+  public void updateUser(@PathVariable("id") Long id, @RequestBody User user) {
+    user.setId(id);
+    userService.update(user);
   }
 
 }
