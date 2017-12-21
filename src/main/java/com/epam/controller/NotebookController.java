@@ -1,5 +1,8 @@
 package com.epam.controller;
 
+import com.epam.exception.NotFoundException;
+import com.epam.exception.NotebookException;
+import com.epam.exception.UserException;
 import com.epam.model.Notebook;
 import com.epam.model.User;
 import com.epam.services.impl.NotebookService;
@@ -33,7 +36,11 @@ public class NotebookController {
   @ResponseStatus(HttpStatus.OK)
   @GetMapping(value = "/notebooks/{id}")
   public Notebook getById(@PathVariable("id") Long id) {
-    return notebookService.getById(id);
+    Notebook notebook = notebookService.getById(id);
+    if (notebook == null) {
+      throw new NotFoundException("Notebook with id:" + id + " not found!");
+    }
+    return notebook;
   }
 
   @ResponseStatus(HttpStatus.OK)
@@ -50,6 +57,11 @@ public class NotebookController {
   public void createNotebook(@RequestBody Notebook notebook) {
     Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     User user = userService.getByEmail(principal.toString());
+
+    if (user == null) {
+      throw new UserException("You are not authorized!");
+    }
+
     notebook.setUser(user);
 
     notebookService.saveOrUpdate(notebook);

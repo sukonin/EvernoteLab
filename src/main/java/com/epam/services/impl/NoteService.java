@@ -98,6 +98,7 @@ public class NoteService implements CrudService<Note, Long> {
   @Override
   @Transactional
   public void saveOrUpdate(Note domainObject) {
+
     noteRepository.save(domainObject);
   }
 

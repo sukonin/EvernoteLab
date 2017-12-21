@@ -9,7 +9,6 @@ import com.epam.services.CrudService;
 import java.util.List;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,18 +19,22 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService implements CrudService<User, Long> {
 
   private final UserRepository userRepository;
-  /*private final NotebookService notebookService;*/
+  private final NotebookService notebookService;
 
   @Autowired
   public UserService(UserRepository userRepository,
       NotebookService notebookService) {
     this.userRepository = userRepository;
-    /*this.notebookService = notebookService;*/
+    this.notebookService = notebookService;
   }
 
   @PerformanceMonitor
-  public User getByEmail(String email) {
-    return userRepository.findUserByEmail(email);
+  public User getByEmail(String email) throws UserException {
+    User userByEmail = userRepository.findUserByEmail(email);
+    if (userByEmail == null) {
+      log.info("User not found with email " + email + "!");
+    }
+    return userByEmail;
   }
 
   @PerformanceMonitor
@@ -43,7 +46,12 @@ public class UserService implements CrudService<User, Long> {
   @PerformanceMonitor
   @Override
   public User getById(Long id) {
-    return userRepository.findUserById(id);
+    User user = userRepository.findUserById(id);
+    if (user == null) {
+      throw new UserException(
+          "User not found with id " + id + "!");
+    }
+    return user;
   }
 
   @PerformanceMonitor
@@ -61,10 +69,10 @@ public class UserService implements CrudService<User, Long> {
     user.setPassword(password);
     userRepository.save(user);
 
-  /*  Notebook defaultNotebook = new Notebook();
+    Notebook defaultNotebook = new Notebook();
     defaultNotebook.setTitle("Default Notebook");
     defaultNotebook.setUser(user);
-    notebookService.saveOrUpdate(defaultNotebook);*/
+    notebookService.saveOrUpdate(defaultNotebook);
   }
 
   @PerformanceMonitor
@@ -74,7 +82,14 @@ public class UserService implements CrudService<User, Long> {
     userRepository.deleteById(id);
   }
 
+  @Transactional
+  @PerformanceMonitor
   public void update(User user) {
+
+    String password = user.getPassword();
+    password = new BCryptPasswordEncoder().encode(password);
+    user.setPassword(password);
+
     userRepository.save(user);
   }
 }

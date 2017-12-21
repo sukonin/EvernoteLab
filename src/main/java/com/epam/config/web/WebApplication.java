@@ -39,6 +39,4 @@ public class WebApplication implements WebApplicationInitializer {
   public RequestContextListener requestContextListener() {
     return new RequestContextListener();
   }
-
-
 }

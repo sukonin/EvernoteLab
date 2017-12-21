@@ -3,6 +3,7 @@ HomeWork SpringLab December
 
 Spring MVC + Spring Security + AOP+ Swagger + Jacoco + Integration tests
 
+http://localhost:8080/login
 Login: test
 Password: test
 

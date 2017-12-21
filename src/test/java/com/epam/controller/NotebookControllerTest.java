@@ -12,6 +12,7 @@ import com.epam.config.ApplicationConfiguration;
 import com.epam.config.web.WebApplication;
 import com.epam.config.web.WebConfig;
 import com.epam.model.Notebook;
+import com.epam.model.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.annotation.Resource;
 import org.junit.AfterClass;

@@ -76,10 +76,11 @@ public class UserControllerTest {
     User user = userService.getById(8L);
     ObjectMapper objectMapper = new ObjectMapper();
     user.setUsername("Another Name");
+    user.setPassword("test");
 
     String json = objectMapper.writeValueAsString(user);
 
-    mvc.perform(put("/users/1")
+    mvc.perform(put("/users/8")
         .with(httpBasic("test","test"))
         .content(json)
         .contentType(MediaType.APPLICATION_JSON))
