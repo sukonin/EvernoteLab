@@ -82,7 +82,7 @@ public class TagControllerTest {
     mvc.perform(delete("/tags/2")
         .with(httpBasic("test", "test"))
         .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isNoContent());
+        .andExpect(status().isOk());
   }
 
   @Test

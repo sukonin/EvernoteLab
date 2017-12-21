@@ -179,6 +179,7 @@
           <dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>
           <excludes>
             <exclude>**/model/**</exclude>
+            <exclude>**/exception/**</exclude>
           </excludes>
         </configuration>
         <executions>

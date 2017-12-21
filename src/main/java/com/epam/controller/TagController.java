@@ -63,7 +63,7 @@ public class TagController {
     tagService.saveOrUpdate(tag);
   }
 
-  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseStatus(HttpStatus.OK)
   @DeleteMapping(value = "/tags/{id}")
   public void removeTag(@PathVariable("id") Long id) {
     tagService.delete(id);

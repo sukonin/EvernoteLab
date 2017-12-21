@@ -62,7 +62,7 @@ public class NoteController {
 
   }
 
-  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseStatus(HttpStatus.OK)
   @DeleteMapping(value = "/notes/{id}")
   public void deleteNode(@PathVariable("id") Long id) {
     noteService.delete(id);
