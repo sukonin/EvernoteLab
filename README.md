@@ -10,7 +10,7 @@ Password: test
 | URL Path                                 | Request methods | Result                                                           |
 |------------------------------------------|-----------------|------------------------------------------------------------------|
 | /login                                   | POST            |                                                                  |
-| /logout                                  |                 |                                                                  |
+| /logout                                  | POST            |                                                                  |
 |                                          |                 |                                                                  |
 | /registration                            | POST            | create new user                                                  |
 | /users                                   | GET             | get all users                                                    |
