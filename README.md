@@ -9,6 +9,9 @@ Password: test
 
 | URL Path                                 | Request methods | Result                                                           |
 |------------------------------------------|-----------------|------------------------------------------------------------------|
+| /login                                   | POST            |                                                                  |
+| /logout                                  |                 |                                                                  |
+|                                          |                 |                                                                  |
 | /registration                            | POST            | create new user                                                  |
 | /users                                   | GET             | get all users                                                    |
 | /users/{id}                              | PUT             | update current user                                              |
